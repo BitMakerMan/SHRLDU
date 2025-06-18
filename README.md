@@ -1,6 +1,8 @@
 # SHRDLU in Prolog
 
-Una reimplementazione del famoso sistema di AI **SHRDLU** di Terry Winograd (1970) in Prolog. Il sistema comprende comandi in linguaggio naturale italiano e manipola blocchi in un mondo virtuale.
+Una reimplementazione del famoso sistema di AI **SHRDLU** di Terry Winograd (1970) in Prolog (Il codice è sviluppato da Claude). 
+Il sistema comprende comandi in linguaggio naturale italiano e manipola blocchi in un mondo virtuale.
+
 
 ## 🚀 Quick Start
 
