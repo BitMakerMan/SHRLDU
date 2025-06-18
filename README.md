@@ -22,19 +22,40 @@ swipl
 
 ## 🎮 Utilizzo
 
+### Due Modi di Interazione
+
+#### Modalità 1: Conversazione Interattiva (Raccomandato)
+```prolog
+?- start_shrdlu.
+=== BENVENUTO IN SHRDLU ===
+...
+> prendi a
+Ho preso il blocco a
+> esci
+```
+
+#### Modalità 2: Comandi Singoli
+```prolog
+?- process_command("prendi a").
+Ho preso il blocco a
+
+?- show_world.
+=== STATO DEL MONDO ===
+...
+```
+
 ### Mondo Iniziale
 Il sistema inizia con 5 blocchi colorati:
 ```
-    [A-rosso]
-    [B-blu]     [C-verde]
-                [D-giallo]    [E-nero]
-    ─────────────────────────────────
+    [A-rosso]     [C-verde]
+    [B-blu]       [D-giallo]    [E-nero]
+    ─────────────────────────────────────
               TAVOLO
 ```
 
 ### Comandi Base
 
-#### 🤏 Manipolazione
+#### 🤏 Manipolazione (Modalità Conversazione)
 ```
 > prendi a
 Ho preso il blocco a
@@ -49,7 +70,14 @@ Ho preso il blocco c
 Ho messo il blocco c su b
 ```
 
-#### ❓ Domande
+#### 🤏 Manipolazione (Modalità Singola)
+```prolog
+?- process_command("prendi a").
+?- process_command("metti a su e").
+?- process_command("sposta c su b").
+```
+
+#### ❓ Domande (Modalità Conversazione)
 ```
 > dove e a
 Il blocco a è su e
@@ -62,6 +90,14 @@ Il blocco a è rosso
 
 > quanti blocchi ci sono
 Ci sono 5 blocchi
+```
+
+#### ❓ Domande (Modalità Singola)
+```prolog
+?- process_command("dove e a").
+?- process_command("cosa ce sopra b").
+?- process_command("che colore e a").
+?- process_command("quanti blocchi ci sono").
 ```
 
 #### 🎨 Riferimenti per Colore
@@ -87,16 +123,14 @@ Ho messo il blocco c su tavolo
 | **Contenuto** | `cosa ce sopra X` | `cosa ce sopra b` |
 | **Colore** | `che colore e X` | `che colore e c` |
 | **Conteggio** | `quanti blocchi ci sono` | - |
-| **Stato** | `mostra mondo` | - |
-| **Esci** | `esci` | - |
+| **Stato** | `mostra mondo` | (solo in conversazione) |
+| **Esci** | `esci` | (solo in conversazione) |
 
 ### Esempi di Sessione Completa
 
-#### 📋 Esempio 1: Costruire una Torre
-```
-> mostra mondo
-=== STATO DEL MONDO ===
-...
+#### 📋 Esempio 1: Modalità Conversazione
+```prolog
+?- start_shrdlu.
 
 > prendi a
 Ho preso il blocco a
@@ -108,37 +142,45 @@ Ho messo il blocco a su tavolo
 Ho preso il blocco c
 Ho messo il blocco c su a
 
-> sposta d su c
-Prima devo posare d
-Ho preso il blocco d
-Ho messo il blocco d su c
-
 > mostra mondo
-# Ora hai una torre: D sopra C sopra A
+=== STATO DEL MONDO ===
+[Torre: C sopra A sul tavolo]
+
+> esci
+Arrivederci!
 ```
 
-#### 🔍 Esempio 2: Esplorazione
+#### 📋 Esempio 2: Modalità Singola
+```prolog
+?- show_world.
+=== STATO DEL MONDO ===
+...
+
+?- process_command("prendi a").
+Ho preso il blocco a
+
+?- process_command("metti a su e").
+Ho messo il blocco a su e
+
+?- show_world.
+=== STATO DEL MONDO ===
+[A ora è su E]
 ```
-> dove e b
-Il blocco b è su tavolo
 
-> cosa ce sopra b
-Non c'è niente sopra b
-
-> prendi il blocco blu
-Ho preso il blocco b
-
-> che colore e b
-Il blocco b è blu
-
-> metti b su e
-Ho messo il blocco b su e
+#### 🔍 Esempio 3: Sequenza di Test Rapida
+```prolog
+% Carica e testa
+?- [shrdlu].
+?- show_world.
+?- process_command("prendi c").
+?- process_command("dove e c").
+?- process_command("metti c su e").
+?- show_world.
 ```
 
 ## 🧠 Funzionalità Avanzate
 
 ### Planning Automatico
-Il sistema può pianificare sequenze complesse:
 ```prolog
 ?- plan_to_achieve(on(a, c), Piano).
 Piano = [move(d, tavolo), move(a, c)].
@@ -169,7 +211,6 @@ Comando = pick_up_color(rosso).
 ?- test_understanding.
 Comando: prendi a -> pick_up(a)
 Comando: metti b su c -> put_on(b, c)
-...
 ```
 
 ### Controllo Stato
@@ -189,7 +230,53 @@ Ho preso il blocco a
 Ho messo il blocco a su e
 ```
 
-## 🎯 Casi d'Uso Interessanti
+## 🎯 Test Rapidi per Iniziare
+
+### Test Base (Copy-Paste)
+```prolog
+% 1. Carica il sistema
+?- [shrdlu].
+
+% 2. Verifica stato iniziale  
+?- show_world.
+
+% 3. Prova comandi singoli
+?- process_command("prendi a").
+?- process_command("dove e a").
+?- process_command("metti a su e").
+
+% 4. Verifica risultato
+?- show_world.
+```
+
+### Test Conversazione (Copy-Paste)
+```prolog
+% Avvia conversazione
+?- start_shrdlu.
+
+% Poi digita questi comandi uno alla volta:
+prendi c
+metti c su e
+dove e c
+che colore e c
+sposta a su c
+mostra mondo
+esci
+```
+
+### Test Avanzato (Copy-Paste)
+```prolog
+% Test planning
+?- plan_to_achieve(on(a, e), Piano).
+
+% Test riferimenti colore
+?- process_command("prendi il blocco rosso").
+
+% Test parsing
+?- parse_command("sposta il blocco verde su tavolo", X).
+```
+
+## 🎮 Casi d'Uso Interessanti
 
 ### 🏗️ Costruire Configurazioni Specifiche
 ```
@@ -237,6 +324,19 @@ Non posso mettere a su a
 
 ### Errori Comuni
 
+**"mostra mondo" non funziona:**
+```prolog
+% SBAGLIATO (in Prolog diretto):
+?- mostra mondo.
+
+% GIUSTO (modalità conversazione):
+?- start_shrdlu.
+> mostra mondo
+
+% OPPURE (comando diretto):
+?- show_world.
+```
+
 **Parser non capisce il comando:**
 ```
 > afferra a
@@ -258,10 +358,20 @@ Non ho capito "afferra a". Prova con:
 ?- [shrdlu].
 ```
 
+**Errore "procedure does not exist":**
+```prolog
+% Assicurati di aver caricato il file
+?- [shrdlu].
+
+% Verifica che il predicato esista
+?- listing(show_world).
+```
+
 ## 📊 Struttura del Codice
 
 ```
 shrdlu.pl
+├── Dichiarazioni dinamiche (:- dynamic)
 ├── Definizione blocchi e stato iniziale
 ├── Parser linguaggio naturale  
 ├── Risoluzione riferimenti
@@ -333,7 +443,4 @@ MIT License - vedi file `LICENSE` per dettagli.
 - [Prolog Tutorial](https://www.cpp.edu/~jrfisher/www/prolog_tutorial/contents.html)
 
 ---
-
-**Happy Coding!** 🤖✨
-
-*Per domande o supporto, apri una issue su GitHub.*
+Realizzato da Claude
